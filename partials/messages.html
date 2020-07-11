@@ -1,4 +1,4 @@
-{% from "./message.html" import message %}
+{% from "partials/message.html" import message %}
 
 <a name="messages"></a>
 <h2 class="ml-8 mt-4">Messages</h2>
@@ -6,10 +6,12 @@
 <div class="responsive-container">
   <div class="center-block p-8">
     <div class="pb-8">
-      {% for key, value in asyncapi.allMessages() %}
+      {% if asyncapi.components %}
+      {% for key, value in asyncapi.components.messages.items() %}
       <a name="message-{{key}}"></a>
       {{ message(value, showIndex=true, index=loop.index, open=false) }}
       {% endfor %}
+      {% endif %}
     </div>
   </div>
 </div>

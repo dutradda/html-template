@@ -1,4 +1,4 @@
-{% from "./sliced-string.html" import slicedString %}
+{% from "partials/sliced-string.html" import slicedString %}
 
 <input id="burger-menu" type="checkbox" />
 <label for="burger-menu" class="shadow">
@@ -10,10 +10,10 @@
 </label>
 <div class="sidebar-panel fixed pin-t pin-l pin-b w-64 bg-grey-lighter font-sans pt-8 pr-4 pb-4 pl-4">
   <div class="sidebar-panel__content">
-    {% if asyncapi.info().ext('x-logo') %}
-    <img src="{{ asyncapi.info().ext('x-logo') }}" alt="{{ asyncapi.info().title() }} logo">
+    {% if asyncapi.info.ext %}
+    <img src="{{ asyncapi.info.ext('x-logo') }}" alt="{{ asyncapi.info.title }} logo">
     {% else %}
-    <h1 class="text-2xl font-thin">{{ asyncapi.info().title() }} {{ asyncapi.info().version() }}</h1>
+    <h1 class="text-2xl font-thin">{{ asyncapi.info.title }} {{ asyncapi.info.version }}</h1>
     {% endif %}
     <ul class="text-sm mt-10 list-reset mt-2">
       <li class="mb-3">
@@ -25,13 +25,13 @@
       </li>
       {% endif %}
     </ul>
-    {% if asyncapi.hasChannels() %}
+    {% if asyncapi.channels %}
     <h2 class="text-xs uppercase text-grey mt-10 mb-4 font-thin">Operations</h2>
     <ul class="text-sm list-reset mt-2">
-      {% if params.sidebarOrganization === 'byTags' %}
+      {% if params.sidebarOrganization == 'byTags' %}
       <!-- With tags in sidebar -->
-      {% if asyncapi.hasTags() %}
-      {% for categorytags in asyncapi.tags() %}
+      {% if asyncapi.tags %}
+      {% for categorytags in asyncapi.tags %}
       <div class="mt-4 {% if open %}is-open{% endif %}">
         <div class="js-prop cursor-pointer py-2 flex property">
           <div class="pr-4" style="margin-top:-2px; min-width: 25%;">
@@ -43,15 +43,15 @@
           </div>
         </div>
         <div class="children">
-          {% for channelName, channel in asyncapi.channels() %}
-             {% if channel.publish() and channel.publish().hasTags() and channel.publish() | containTags(categorytags) %}
+          {% for channelName, channel in asyncapi.channels %}
+             {% if channel.publish %}
               <a class="js-menu-item flex break-words no-underline text-grey-darkest mt-8 sm:mt-8 md:mt-3"
                 href="#operation-publish-{{ channelName }}">
                 <span class="bg-blue-dark font-bold h-6 no-underline text-white uppercase p-1 mr-2 rounded"
                   style="height: 21px;font-size: 11px;" title="Publish">Pub</span>
-                {% if channel.publish().summary() %}
+                {% if channel.publish.summary %}
                 <span style="padding-top: 2px;">
-                  {{ channel.publish().summary() }}
+                  {{ channel.publish.summary }}
                 </span>
                 {% else %}
                 <div style="display:inline-block;">
@@ -61,15 +61,15 @@
               </a>
             {% endif %}
 
-            {% if channel.subscribe() and channel.subscribe().hasTags() and channel.subscribe() | containTags(categorytags) %}
+            {% if channel.subscribe %}
             <a class="js-menu-item flex break-words no-underline text-grey-darkest mt-8 sm:mt-8 md:mt-3"
               href="#operation-subscribe-{{ channelName }}">
               {% if channel.deprecated %}<span title="Deprecated"></span>{% endif %}
               <span class="bg-green-dark font-bold no-underline text-white uppercase p-1 mr-2 rounded"
                 style="height: 21px;font-size: 11px;" title="Subscribe">Sub</span>
-              {% if channel.subscribe().summary() %}
+              {% if channel.subscribe.summary %}
               <span style="padding-top: 2px;">
-                {{ channel.subscribe().summary() }}
+                {{ channel.subscribe.summary }}
               </span>
               {% else %}
               <div style="display:inline-block;">
@@ -84,7 +84,7 @@
       {% endfor %}
       {% endif %}
 
-      {% if asyncapi.channels() | containNoTag(asyncapi.tags()) %}
+      {% if asyncapi.channels %}
       <!-- Untagged operations -->
       <div class="mt-4 {% if open %}is-open{% endif %}">
         <div class="js-prop cursor-pointer py-2 flex property">
@@ -96,15 +96,15 @@
           </div>
         </div>
         <div class="children">
-          {% for channelName, channel in asyncapi.channels() %}
-          {% if channel.hasPublish() and (not channel.publish().hasTags() or not channel.publish() | containTags(asyncapi.tags())) %}
+          {% for channelName, channel in asyncapi.channels %}
+          {% if channel.hasPublish %}
           <a class="js-menu-item flex break-words no-underline text-grey-darkest mt-8 sm:mt-8 md:mt-3"
             href="#operation-publish-{{ channelName }}">
             <span class="bg-blue-dark font-bold h-6 no-underline text-white uppercase p-1 mr-2 rounded"
               style="height: 21px;font-size: 11px;" title="Publish">Pub</span>
-            {% if channel.publish().summary() %}
+            {% if channel.publish.summary %}
             <span style="padding-top: 2px;">
-              {{ channel.publish().summary() }}
+              {{ channel.publish.summary }}
             </span>
             {% else %}
             <div style="display:inline-block;">
@@ -113,14 +113,14 @@
             {% endif %}
           </a>
           {% endif %}
-          {% if channel.hasSubscribe() and (not channel.subscribe().hasTags() or not channel.subscribe() | containTags(asyncapi.tags())) %}
+          {% if channel.hasSubscribe %}
           <a class="js-menu-item flex break-words no-underline text-grey-darkest mt-8 sm:mt-8 md:mt-3"
             href="#operation-subscribe-{{ channelName }}">
             <span class="bg-green-dark font-bold no-underline text-white uppercase p-1 mr-2 rounded"
               style="height: 21px;font-size: 11px;" title="Subscribe">Sub</span>
-            {% if channel.subscribe().summary() %}
+            {% if channel.subscribe.summary %}
             <span style="padding-top: 2px;">
-              {{ channel.subscribe().summary() }}
+              {{ channel.subscribe.summary }}
             </span>
             {% else %}
             <div style="display:inline-block;">
@@ -137,16 +137,16 @@
       {% else %}
 
       <!--Without tags in sidebar-->
-      {% for channelName, channel in asyncapi.channels() %}
+      {% for channelName, channel in asyncapi.channels.items() %}
       <li>
-        {% if channel.publish() %}
+        {% if channel.publish %}
         <a class="js-menu-item flex break-words no-underline text-grey-darkest mt-8 sm:mt-8 md:mt-3"
           href="#operation-publish-{{ channelName }}">
           <span class="bg-blue-dark font-bold h-6 no-underline text-white uppercase p-1 mr-2 rounded"
             style="height: 21px;font-size: 11px;" title="Publish">Pub</span>
-          {% if channel.publish().summary() %}
+          {% if channel.publish.summary %}
           <span style="padding-top: 2px;">
-            {{ channel.publish().summary() }}
+            {{ channel.publish.summary }}
           </span>
           {% else %}
           <div style="display:inline-block;">
@@ -155,14 +155,14 @@
           {% endif %}
         </a>
         {% endif %}
-        {% if channel.subscribe() %}
+        {% if channel.subscribe %}
         <a class="js-menu-item flex break-words no-underline text-grey-darkest mt-8 sm:mt-8 md:mt-3"
           href="#operation-subscribe-{{ channelName }}">
           <span class="bg-green-dark font-bold no-underline text-white uppercase p-1 mr-2 rounded"
             style="height: 21px;font-size: 11px;" title="Subscribe">Sub</span>
-          {% if channel.subscribe().summary() %}
+          {% if channel.subscribe.summary %}
           <span style="padding-top: 2px;">
-            {{ channel.subscribe().summary() }}
+            {{ channel.subscribe.summary }}
           </span>
           {% else %}
           <div style="display:inline-block;">
@@ -176,9 +176,11 @@
       {% endfor %}
     </ul>
     {% endif %}
+    {% if asyncapi.components %}
+    {% if asyncapi.components.messages %}
     <h2 class="text-xs uppercase text-grey mt-10 mb-4 font-thin">Messages</h2>
     <ul class="text-sm list-reset mt-2">
-      {% for key, value in asyncapi.allMessages() %}
+      {% for key, value in asyncapi.components.messages.items() %}
         <a class="js-menu-item flex break-words no-underline text-grey-darkest mt-8 sm:mt-8 md:mt-3"
           href="#message-{{ key }}">
           <div style="display:inline-block;">
@@ -187,6 +189,8 @@
         </a>
       {% endfor %}
     </ul>
+    {% endif %}
+    {% endif %}
     {% endif %}
   </div>
 </div>

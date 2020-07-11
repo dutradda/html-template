@@ -1,5 +1,5 @@
-{% from "./schema.html" import schema %}
-{% from "./tags.html" import tags %}
+{% from "partials/schema.html" import schema %}
+{% from "partials/tags.html" import tags %}
 
 {% macro message(msg, showIndex=false, index=0, open=false) %}
 
@@ -8,22 +8,22 @@
     {% if showIndex %}
     <span class="text-grey-darker font-bold mr-2">#{{index}}</span>
     {% endif %}
-    {% if msg.title() %}
-      {{msg.title()}}
-      <span class="border text-orange rounded text-xs ml-3 py-0 px-2">{{msg.uid()}}</span>
+    {% if msg.title %}
+      {{msg.title}}
+      <span class="border text-orange rounded text-xs ml-3 py-0 px-2">{{msg.uid}}</span>
     {% else %}
-      <span class="border text-orange rounded text-s py-0 px-2">{{msg.uid()}}</span>
+      <span class="border text-orange rounded text-s py-0 px-2">{{msg.uid}}</span>
     {% endif %}
   </div>
-  <p class="text-grey-dark text-sm">{{msg.summary()}}</p>
+  <p class="text-grey-dark text-sm">{{msg.summary}}</p>
   
-  {{ tags(msg.tags()) }}
+  {{ tags(msg.tags) }}
 
-  <div class="mt-4 mb-4 markdown">{{ msg.description() | markdown2html | safe }}</div>
-  {{ schema(msg.payload(), 'Payload', open=open) }}
-  {% if msg.headers() %}
+  <div class="mt-4 mb-4 markdown">{{ msg.description | safe }}</div>
+  {{ schema(msg.payload, 'Payload', open=open) }}
+  {% if msg.headers %}
     <div class="mt-4">
-      {{ schema(msg.headers(), 'Headers', open=open) }}
+      {{ schema(msg.headers, 'Headers', open=open) }}
     </div>
   {% endif %}
 </div>
