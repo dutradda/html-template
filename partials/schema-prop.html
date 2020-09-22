@@ -1,4 +1,4 @@
-{% from "./type.html" import type %}
+{% from "./partials/type.html" import type %}
 
 {% macro schemaProp(prop, propName, open=false, root=false, odd=false, specialName=false, required=false) %}
 
@@ -13,7 +13,7 @@
           <polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon>
         </svg>
         {% endif %}
-        {% if required %}
+        {% if required and required is not none%}
           <div class="text-red-dark text-xs">required</div>
         {% endif %}
         {% if prop.deprecated() %}
@@ -32,39 +32,39 @@
               <span class="bg-yellow-dark font-bold no-underline text-black rounded lowercase ml-2"
                 style="height: 20px;font-size: 11px;padding: 3px;">{{prop.format()}}</span>
             {% endif %}
-            {% if prop.minimum() !== undefined %}
+            {% if prop.minimum() is not none %}
               <span class="bg-purple-dark font-bold no-underline text-white rounded lowercase ml-2"
                 style="height: 20px;font-size: 11px;padding: 3px;" title="At least {{prop.minimum()}}">>= {{prop.minimum()}}</span>
             {% endif %}
-            {% if prop.exclusiveMinimum() !== undefined %}
+            {% if prop.exclusiveMinimum() is not none %}
               <span class="bg-purple-dark font-bold no-underline text-white rounded lowercase ml-2"
                 style="height: 20px;font-size: 11px;padding: 3px;" title="Greater than {{prop.exclusiveMinimum()}}">> {{prop.exclusiveMinimum()}}</span>
             {% endif %}
-            {% if prop.maximum() !== undefined %}
+            {% if prop.maximum() is not none %}
               <span class="bg-purple-dark font-bold no-underline text-white rounded lowercase ml-2"
                 style="height: 20px;font-size: 11px;padding: 3px;" title="At most {{prop.maximum()}}"><= {{prop.maximum()}}</span>
             {% endif %}
-            {% if prop.exclusiveMaximum() !== undefined %}
+            {% if prop.exclusiveMaximum() is not none %}
               <span class="bg-purple-dark font-bold no-underline text-white rounded lowercase ml-2"
                 style="height: 20px;font-size: 11px;padding: 3px;" title="Less than {{prop.exclusiveMaximum()}}">< {{prop.exclusiveMaximum()}}</span>
             {% endif %}
-            {% if prop.minItems() !== undefined %}
+            {% if prop.minItems() is not none %}
               <span class="bg-purple-dark font-bold no-underline text-white rounded lowercase ml-2"
                 style="height: 20px;font-size: 11px;padding: 3px;">>= {{prop.minItems()}} items</span>
             {% endif %}
-            {% if prop.maxItems() !== undefined %}
+            {% if prop.maxItems() is not none %}
               <span class="bg-purple-dark font-bold no-underline text-white rounded lowercase ml-2"
                 style="height: 20px;font-size: 11px;padding: 3px;"><= {{prop.maxItems()}} items</span>
             {% endif %}
-            {% if prop.maxLength() !== undefined %}
+            {% if prop.maxLength() is not none %}
               <span class="bg-purple-dark font-bold no-underline text-white rounded lowercase ml-2"
                 style="height: 20px;font-size: 11px;padding: 3px;">length <= {{prop.maxLength()}}</span>
             {% endif %}
-            {% if prop.minLength() !== undefined %}
+            {% if prop.minLength() is not none %}
             <span class="bg-purple-dark font-bold no-underline text-white rounded lowercase ml-2"
                   style="height: 20px;font-size: 11px;padding: 3px;">length >= {{prop.minLength()}}</span>
             {% endif %}
-            {% if prop.pattern() !== undefined %}
+            {% if prop.pattern() is not none %}
             <span class="bg-purple-dark font-bold no-underline text-white rounded normal-case ml-2"
                   style="height: 20px;font-size: 11px;padding: 3px;">must match {{prop.pattern()}}</span>
             {% endif %}
@@ -78,10 +78,10 @@
         {% if prop.description() %}
           <div class="text-sm markdown">{{ prop.description() | markdown2html | safe }}</div>
         {% endif %}
-        {% if prop.default() !== undefined %}
+        {% if prop.default() is not none %}
           <div class="text-xs">Default: {{prop.default() | dump}}</div>
         {% endif %}
-        {% if prop.const() !== undefined %}
+        {% if prop.const() is not none %}
           <div class="text-xs">Const: {{prop.const() | dump}}</div>
         {% endif %}
         {% if prop.enum() %}
@@ -107,12 +107,16 @@
       <div class="children {% if odd %}bg-grey-lightest{% else %}bg-grey-lighter{% endif %} py-4 rounded">
         {% if prop.properties() %}
           {% for pName, p in prop.properties() %}
-            {{ schemaProp(p, pName, odd=(not odd), required=(prop.required() | includes(pName))) }}
+            {% if prop.required() and pName in prop.required() %}
+              {{ schemaProp(p, pName, odd=(not odd), required=true) }}
+            {% else %}
+              {{ schemaProp(p, pName, odd=(not odd), required=false) }}
+            {% endif %}
           {% endfor %}
         {% endif %}
 
         {% set extensions = prop | nonParserExtensions %}
-        {% if extensions.size > 0 %}
+        {% if extensions %}
           <p class="pl-6 mb-2 mt-4 text-sm font-bold text-grey-darker">Specification Extensions:</p>
           {% for extensionName, extensionValue in extensions %}
               <div class="{% if odd %}bg-grey-lightest{% else %}bg-grey-lighter{% endif %} pl-6">
@@ -140,21 +144,21 @@
             {% endfor %}
         {% endif %}
 
-        {% if prop.type() === 'array' %}
+        {% if prop.type() == 'array' %}
           {% if prop.items() %}
             <p class="pl-6 mb-2 text-xs font-bold uppercase text-grey-darker">Items:</p>
             {% if prop.items() | isArray %}
               {% for it in prop.items() %}
-              {{ schemaProp(it, loop.index0, odd=(not odd), required=(prop.required() | includes(pName))) }}
+              {{ schemaProp(it, loop.index0, odd=(not odd), required=prop.required()|boolean) }}
               {% endfor %}
             {% else %}
               {{ schemaProp(prop.items(), '0', odd=(not odd)) }}
             {% endif %}
           {% endif %}
 
-          {% if prop.additionalItems() === true or prop.additionalItems() === undefined %}
+          {% if prop.additionalItems() or prop.additionalItems() is none %}
             <p class="pl-6 mb-2 mt-4 text-xs text-grey-darker">Additional items are allowed.</p>
-          {% elif prop.additionalItems() === false %}
+          {% elif not prop.additionalItems() and prop.additionalItems() is not none %}
             <p class="pl-6 mb-2 mt-4 text-xs text-grey-darker">Additional items are NOT allowed.</p>
           {% else %}
             <p class="pl-6 mb-2 mt-4 text-xs font-bold text-grey-darker">Additional Items:</p>
@@ -164,10 +168,10 @@
           {% endif %}
         {% endif %}
 
-        {% if prop.type() === 'object' %}
-          {% if prop.additionalProperties() === true or prop.additionalProperties() === undefined or prop.additionalProperties() === null %}
+        {% if prop.type() == 'object' %}
+          {% if prop.additionalProperties() or prop.additionalProperties() is none %}
             <p class="pl-6 mb-2 mt-4 text-xs text-grey-darker">Additional properties are allowed.</p>
-          {% elif prop.additionalProperties() === false %}
+          {% elif not prop.additionalProperties() and prop.additionalProperties() is not none %}
             <p class="pl-6 mb-2 mt-4 text-xs text-grey-darker">Additional properties are <strong>NOT</strong> allowed.</p>
           {% else %}
             <p class="pl-6 mb-2 mt-4 text-xs font-bold text-grey-darker">Additional properties must adhere to the following schema:</p>

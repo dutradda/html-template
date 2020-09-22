@@ -1,4 +1,4 @@
-{% from "./sliced-string.html" import slicedString %}
+{% from "./partials/sliced-string.html" import slicedString %}
 <a name="servers"></a>
 <div class="center-block p-8">
 
@@ -55,31 +55,31 @@
               {% set def = asyncapi.components().securityScheme(sec.json() | keys | head) %}
 
               <span class="font-bold no-underline text-grey-dark text-xs uppercase mr-1">
-                {% if def.type() === 'apiKey' %}
+                {% if def.type() == 'apiKey' %}
                 API key:
                 {% endif %}
-                {% if def.type() === 'oauth2' %}
+                {% if def.type() == 'oauth2' %}
                 OAuth2:
                 {% endif %}
-                {% if def.type() === 'openIdConnect' %}
+                {% if def.type() == 'openIdConnect' %}
                 Open ID:
                 {% endif %}
-                {% if def.type() === 'http' %}
+                {% if def.type() == 'http' %}
                 HTTP:
                 {% endif %}
-                {% if def.type() === 'userPassword' %}
+                {% if def.type() == 'userPassword' %}
                 User / Password:
                 {% endif %}
-                {% if def.type() === 'X509' %}
+                {% if def.type() == 'X509' %}
                 X509:
                 {% endif %}
-                {% if def.type() === 'symmetricEncryption' %}
+                {% if def.type() == 'symmetricEncryption' %}
                 Symmetric Encription:
                 {% endif %}
-                {% if def.type() === 'asymmetricEncryption' %}
+                {% if def.type() == 'asymmetricEncryption' %}
                 Asymmetric Encription:
                 {% endif %}
-                {% if def.type() === 'httpApiKey' %}
+                {% if def.type() == 'httpApiKey' %}
                 HTTP API key:
                 {% endif %}
               </span>
@@ -125,9 +125,9 @@
                   <div>
                     <span class="text-xs font-bold text-grey-dark mt-1 mr-1 uppercase">Flow:</span>
                     <span class="text-grey-dark text-xs font-normal capitalize">
-                      {% if flowName === 'clientCredentials' %}
+                      {% if flowName == 'clientCredentials' %}
                         Client Credentials
-                      {% elif flowName === 'authorizationCode' %}
+                      {% elif flowName == 'authorizationCode' %}
                         Authorization Code
                       {% else %}
                         {{flowName | capitalize}}
