@@ -1,4 +1,3 @@
-{% from "./partials/sliced-string.html" import slicedString %}
 {% from "./partials/tags.html" import tags %}
 {% from "./partials/message.html" import message %}
 {% from "./partials/example.html" import example %}
@@ -18,7 +17,7 @@
       <span class="font-mono border border-green-dark text-green-dark uppercase p-1 rounded"
         title="Subscribe">Sub</span>
       {% endif %}
-      {{ slicedString(channelName) }}
+      {{ channelName }}
     </h3>
 
     {% if channel.description() is not none %}
