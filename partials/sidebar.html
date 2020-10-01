@@ -1,4 +1,4 @@
-{% from "./sliced-string.html" import slicedString %}
+{% from "./partials/sliced-string.html" import slicedString %}
 
 <input id="burger-menu" type="checkbox" />
 <label for="burger-menu" class="shadow">
@@ -28,7 +28,7 @@
     {% if asyncapi.hasChannels() %}
     <h2 class="text-xs uppercase text-grey mt-10 mb-4 font-thin">Operations</h2>
     <ul class="text-sm list-reset mt-2">
-      {% if params.sidebarOrganization === 'byTags' %}
+      {% if params.sidebarOrganization == 'byTags' %}
       <!-- With tags in sidebar -->
       {% if asyncapi.hasTags() %}
       {% for categorytags in asyncapi.tags() %}
@@ -55,7 +55,9 @@
                 </span>
                 {% else %}
                 <div style="display:inline-block;">
-                  {{ slicedString(channelName, 'padding-top: 2px;') }}
+                  <span class="string-chunk" style="padding-top: 2px;">
+                    {{channelName}}
+                  </span>
                 </div>
                 {% endif %}
               </a>
@@ -73,7 +75,9 @@
               </span>
               {% else %}
               <div style="display:inline-block;">
-                {{ slicedString(channelName, 'padding-top: 2px;') }}
+                <span class="string-chunk" style="padding-top: 2px;">
+                  {{channelName}}
+                </span>
               </div>
               {% endif %}
             </a>
@@ -108,7 +112,9 @@
             </span>
             {% else %}
             <div style="display:inline-block;">
-              {{ slicedString(channelName, 'padding-top: 2px;') }}
+              <span class="string-chunk" style="padding-top: 2px;">
+                {{channelName}}
+              </span>
             </div>
             {% endif %}
           </a>
@@ -124,7 +130,9 @@
             </span>
             {% else %}
             <div style="display:inline-block;">
-              {{ slicedString(channelName, 'padding-top: 2px;') }}
+              <span class="string-chunk" style="padding-top: 2px;">
+                {{channelName}}
+              </span>
             </div>
             {% endif %}
           </a>
@@ -150,7 +158,9 @@
           </span>
           {% else %}
           <div style="display:inline-block;">
-            {{ slicedString(channelName, 'padding-top: 2px;') }}
+            <span class="string-chunk" style="padding-top: 2px;">
+              {{channelName}}
+            </span>
           </div>
           {% endif %}
         </a>
@@ -166,7 +176,9 @@
           </span>
           {% else %}
           <div style="display:inline-block;">
-            {{ slicedString(channelName, 'padding-top: 2px;') }}
+            <span class="string-chunk" style="padding-top: 2px;">
+              {{channelName}}
+            </span>
           </div>
           {% endif %}
         </a>

@@ -1,8 +1,7 @@
-{% from "./schema.html" import schema %}
-{% from "./tags.html" import tags %}
+{% from "./partials/schema.html" import schema %}
+{% from "./partials/tags.html" import tags %}
 
 {% macro message(msg, showIndex=false, index=0, open=false) %}
-
 <div class="bg-grey-lighter rounded p-4 mt-2">
   <div class="text-sm text-grey-darker mb-2">
     {% if showIndex %}
@@ -15,11 +14,19 @@
       <span class="border text-orange rounded text-s py-0 px-2">{{msg.uid()}}</span>
     {% endif %}
   </div>
-  <p class="text-grey-dark text-sm">{{msg.summary()}}</p>
-  
-  {{ tags(msg.tags()) }}
 
-  <div class="mt-4 mb-4 markdown">{{ msg.description() | markdown2html | safe }}</div>
+  {% if msg.summary() is not none %}
+    <p class="text-grey-dark text-sm">{{msg.summary()}}</p>
+  {% endif %}
+  
+  {% if msg.tags() is not none %}
+    {{ tags(msg.tags()) }}
+  {% endif %}
+
+  {% if msg.description() is not none %}
+    <div class="mt-4 mb-4 markdown">{{ msg.description() | markdown2html | safe }}</div>
+  {% endif %}
+
   {{ schema(msg.payload(), 'Payload', open=open) }}
   {% if msg.headers() %}
     <div class="mt-4">
